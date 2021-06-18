@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:online_shop/inner_screens/product_details.dart';
 import 'package:online_shop/models/product.dart';
 import 'package:online_shop/provider/product.dart';
+import 'package:online_shop/widgets/feeds_dialog.dart';
 import 'package:provider/provider.dart';
 
 class FeedsProducts extends StatefulWidget {
@@ -115,11 +116,18 @@ class _FeedsProductsState extends State<FeedsProducts> {
                         Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () async{
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) => FeedDialog(
+                                  productId: productAttribute.id,
+                                ),
+                              );
+                            },
                             borderRadius: BorderRadius.circular(18),
                             child: Icon(Icons.more_horiz),
                           ),
-                        )
+                        ),
                       ],
                     )
                   ],

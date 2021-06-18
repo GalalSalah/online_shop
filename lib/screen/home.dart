@@ -5,13 +5,13 @@ import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:online_shop/conts/colors_const.dart';
-import 'package:online_shop/inner_screens/brand_navigation_rail_screen.dart';
-import 'package:online_shop/provider/product.dart';
-import 'package:online_shop/screen/feeds.dart';
-import 'package:online_shop/widgets/back_layer.dart';
-import 'package:online_shop/widgets/category.dart';
-import 'package:online_shop/widgets/popular_product.dart';
+import '../conts/colors_const.dart';
+import '../inner_screens/brand_navigation_rail_screen.dart';
+import '../provider/product.dart';
+import 'feeds.dart';
+import '../widgets/back_layer.dart';
+import '../widgets/category.dart';
+import '../widgets/popular_product.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
@@ -178,7 +178,10 @@ class Home extends StatelessWidget {
                   ),
                   Spacer(),
                   FlatButton(
-                    onPressed: () {Navigator.pushNamed(context, Feeds.routeName,arguments: 'popular');},
+                    onPressed: () {
+                      Navigator.pushNamed(context, Feeds.routeName,
+                          arguments: 'popular');
+                    },
                     child: Text(
                       'View all..',
                       style: TextStyle(

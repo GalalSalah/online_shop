@@ -1,9 +1,15 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:online_shop/models/product.dart';
-import 'package:online_shop/provider/product.dart';
-import 'package:online_shop/widgets/feeds_products.dart';
+import '../conts/colors_const.dart';
+import '../conts/my_icon.dart';
+import '../models/product.dart';
+import '../provider/cart_provider.dart';
+import '../provider/fav_provider.dart';
+import '../provider/product.dart';
+import 'wishlist.dart';
+import '../widgets/feeds_products.dart';
 import 'package:provider/provider.dart';
+import 'cart.dart';
 
 class Feeds extends StatelessWidget {
   Feeds({Key key}) : super(key: key);
@@ -18,6 +24,49 @@ class Feeds extends StatelessWidget {
       productList = productProvider.popularProducts;
     }
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Feeds'),
+        actions: [
+          Consumer<FavProvider>(
+            builder: (_, fav, ch) => Badge(
+              badgeColor: ColorsConsts.cartBadgeColor,
+              animationType: BadgeAnimationType.slide,
+              position: BadgePosition.topEnd(top: 7, end: 5),
+              toAnimate: true,
+              badgeContent: Text(
+                fav.getFavItems.length.toString(),
+                style: TextStyle(color: Colors.white),
+              ),
+              child: IconButton(
+                icon: Icon(MyAppIcons.wishlist),
+                onPressed: () {
+                  Navigator.pushNamed(context, Wishlist.routeName);
+                },
+                color: ColorsConsts.favColor,
+              ),
+            ),
+          ),
+          Consumer<CartProvider>(
+            builder: (_, cart, ch) => Badge(
+              badgeColor: ColorsConsts.cartBadgeColor,
+              animationType: BadgeAnimationType.fade,
+              position: BadgePosition.topEnd(top: 7, end: 5),
+              toAnimate: true,
+              badgeContent: Text(
+                cart.getCartItems.length.toString(),
+                style: TextStyle(color: Colors.white),
+              ),
+              child: IconButton(
+                icon: Icon(MyAppIcons.cart),
+                onPressed: () {
+                  Navigator.pushNamed(context, Cart.routeName);
+                },
+                color: ColorsConsts.cartColor,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: GridView.count(
         crossAxisCount: 2,
         childAspectRatio: 240 / 460,

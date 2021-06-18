@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+
 import 'package:online_shop/conts/my_icon.dart';
 import 'package:online_shop/screen/search.dart';
 import 'package:online_shop/screen/user_info.dart';
 
 import 'cart.dart';
-import '../widgets/cart_empty.dart';
+
 import 'feeds.dart';
 import 'home.dart';
 

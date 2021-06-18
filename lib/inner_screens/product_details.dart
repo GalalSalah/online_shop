@@ -1,9 +1,12 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:online_shop/conts/colors_const.dart';
 import 'package:online_shop/conts/my_icon.dart';
+import 'package:online_shop/models/fav_attribute.dart';
 import 'package:online_shop/provider/cart_provider.dart';
 import 'package:online_shop/provider/dark_theme.dart';
+import 'package:online_shop/provider/fav_provider.dart';
 import 'package:online_shop/provider/product.dart';
 import 'package:online_shop/screen/cart.dart';
 import 'package:online_shop/screen/wishlist.dart';
@@ -30,6 +33,8 @@ class _ProductDetailsState extends State<ProductDetails> {
     final productList = productData.products;
     final productAttributeId = productData.findById(productId);
     final themeData = Provider.of<DarkThemeProvider>(context);
+    final favProvider = Provider.of<FavProvider>(context);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -270,19 +275,43 @@ class _ProductDetailsState extends State<ProductDetails> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               actions: [
-                IconButton(
-                  icon: Icon(MyAppIcons.wishlist),
-                  onPressed: () {
-                    Navigator.pushNamed(context, Wishlist.routeName);
-                  },
-                  color: ColorsConsts.favColor,
+                Consumer<FavProvider>(
+                  builder: (_, fav, ch) => Badge(
+                    badgeColor: ColorsConsts.cartBadgeColor,
+                    animationType: BadgeAnimationType.slide,
+                    position: BadgePosition.topEnd(top: 7, end: 5),
+                    toAnimate: true,
+                    badgeContent: Text(
+                      fav.getFavItems.length.toString(),
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    child: IconButton(
+                      icon: Icon(MyAppIcons.wishlist),
+                      onPressed: () {
+                        Navigator.pushNamed(context, Wishlist.routeName);
+                      },
+                      color: ColorsConsts.favColor,
+                    ),
+                  ),
                 ),
-                IconButton(
-                  icon: Icon(MyAppIcons.cart),
-                  onPressed: () {
-                    Navigator.pushNamed(context, Cart.routeName);
-                  },
-                  color: ColorsConsts.cartColor,
+                Consumer<CartProvider>(
+                  builder: (_, cart, ch) => Badge(
+                    badgeColor: ColorsConsts.cartBadgeColor,
+                    animationType: BadgeAnimationType.fade,
+                    position: BadgePosition.topEnd(top: 7, end: 5),
+                    toAnimate: true,
+                    badgeContent: Text(
+                      cart.getCartItems.length.toString(),
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    child: IconButton(
+                      icon: Icon(MyAppIcons.cart),
+                      onPressed: () {
+                        Navigator.pushNamed(context, Cart.routeName);
+                      },
+                      color: ColorsConsts.cartColor,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -355,11 +384,21 @@ class _ProductDetailsState extends State<ProductDetails> {
                         ? Theme.of(context).disabledColor
                         : ColorsConsts.subTitle,
                     child: InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        favProvider.addAndRemoveFav(
+                            productId,
+                            productAttributeId.title,
+                            productAttributeId.price,
+                            productAttributeId.imageUrl);
+                      },
                       child: Center(
                         child: Icon(
-                          MyAppIcons.wishlist,
-                          color: ColorsConsts.white,
+                          favProvider.getFavItems.containsKey(productId)
+                              ? Icons.favorite
+                              : MyAppIcons.wishlist,
+                          color: favProvider.getFavItems.containsKey(productId)
+                              ? Colors.red
+                              : ColorsConsts.white,
                         ),
                       ),
                     ),

@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:online_shop/conts/colors_const.dart';
-import 'package:online_shop/conts/my_icon.dart';
-import 'package:online_shop/widgets/cart_empty.dart';
-import 'package:online_shop/widgets/wishlist_empty.dart';
-import 'package:online_shop/widgets/wishlist_full.dart';
+import '../conts/colors_const.dart';
+import '../conts/my_icon.dart';
+import '../provider/fav_provider.dart';
+import '../widgets/wishlist_empty.dart';
+import '../widgets/wishlist_full.dart';
+import 'package:provider/provider.dart';
 
 class Wishlist extends StatelessWidget {
   const Wishlist({Key key}) : super(key: key);
@@ -12,21 +13,33 @@ class Wishlist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: non_constant_identifier_names
-    List WishlistList = [];
-    return WishlistList.isEmpty
+    final favProvider = Provider.of<FavProvider>(context);
+
+    return favProvider.getFavItems.isEmpty
         ? Scaffold(body: WishlistEmpty())
         : Scaffold(
             appBar: AppBar(
-              title: Text('Cart Items Count'),
+              title: Text('Wishlist(${favProvider.getFavItems.length})'),
               actions: [
-                IconButton(icon: Icon(MyAppIcons.trash), onPressed: () {})
+                IconButton(
+                    icon: Icon(MyAppIcons.trash),
+                    onPressed: () {
+                      favProvider.showDialogTextFav(
+                          'Remove all wishlist!',
+                          'All your wishlist will be remove, are you sure do this! ',
+                          favProvider.clearWish(),
+                          context);
+                    })
               ],
             ),
             body: ListView.builder(
-              itemCount: 2,
+              itemCount: favProvider.getFavItems.length,
               itemBuilder: (BuildContext context, int index) {
-                return WishlistFull();
+                return ChangeNotifierProvider.value(
+                    value: favProvider.getFavItems.values.toList()[index],
+                    child: WishlistFull(
+                      productId: favProvider.getFavItems.keys.toList()[index],
+                    ));
               },
             ),
           );
@@ -47,13 +60,13 @@ class Wishlist extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  gradient: LinearGradient(colors: [
-                    ColorsConsts.starterColor,
-                    ColorsConsts.endColor,
-                  ], stops: [
-                    0.0,
-                    0.7
-                  ]),
+                  gradient: LinearGradient(
+                    colors: [
+                      ColorsConsts.starterColor,
+                      ColorsConsts.endColor,
+                    ],
+                    stops: [0.0, 0.7],
+                  ),
                 ),
                 child: Material(
                   borderRadius: BorderRadius.circular(30),

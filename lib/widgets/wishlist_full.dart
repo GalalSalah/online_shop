@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:online_shop/conts/colors_const.dart';
+import 'package:online_shop/models/fav_attribute.dart';
+import 'package:online_shop/provider/fav_provider.dart';
+import 'package:provider/provider.dart';
 
 class WishlistFull extends StatefulWidget {
-  const WishlistFull({Key key}) : super(key: key);
+  final String productId;
+
+  const WishlistFull({this.productId});
 
   @override
   _WishlistFullState createState() => _WishlistFullState();
@@ -11,6 +16,7 @@ class WishlistFull extends StatefulWidget {
 class _WishlistFullState extends State<WishlistFull> {
   @override
   Widget build(BuildContext context) {
+    final favAttribute = Provider.of<FavAttribute>(context);
     return Stack(
       children: [
         Container(
@@ -28,8 +34,7 @@ class _WishlistFullState extends State<WishlistFull> {
                   children: [
                     Container(
                       height: 80,
-                      child: Image.network(
-                          'https://abong.com.bd/public//admin/media/2020/03/yellow_mesh_men_sport_sneaker_shoesjpeg_20200307141459.jpeg'),
+                      child: Image.network(favAttribute.imageUrl),
                     ),
                     SizedBox(
                       width: 10,
@@ -39,7 +44,7 @@ class _WishlistFullState extends State<WishlistFull> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Title',
+                          favAttribute.title,
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
@@ -47,7 +52,7 @@ class _WishlistFullState extends State<WishlistFull> {
                           width: 10,
                         ),
                         Text(
-                          '\$ 12',
+                          '\$ ${favAttribute.price}',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
@@ -59,12 +64,13 @@ class _WishlistFullState extends State<WishlistFull> {
             ),
           ),
         ),
-        positionedRemove(),
+        positionedRemove(widget.productId),
       ],
     );
   }
 
-  Widget positionedRemove() {
+  Widget positionedRemove(String productId) {
+    final favProvider = Provider.of<FavProvider>(context);
     return Positioned(
       top: 20,
       right: 16,
@@ -81,7 +87,13 @@ class _WishlistFullState extends State<WishlistFull> {
             Icons.clear,
             color: Colors.white,
           ),
-          onPressed: () {},
+          onPressed: () {
+            favProvider.showDialogTextFav(
+                'Remove a Wish',
+                'This product will remove from your Wishlist!',
+                favProvider.removeItem(productId),
+                context);
+          },
         ),
       ),
     );

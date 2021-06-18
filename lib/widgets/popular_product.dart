@@ -3,15 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:online_shop/inner_screens/product_details.dart';
 import 'package:online_shop/models/product.dart';
+import 'package:online_shop/provider/cart_provider.dart';
+import 'package:online_shop/provider/fav_provider.dart';
 import 'package:provider/provider.dart';
 
 class PopularProduct extends StatelessWidget {
-
   const PopularProduct({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final productAttribute=Provider.of<Product>(context);
+    final productAttribute = Provider.of<Product>(context);
+    final cartProvider = Provider.of<CartProvider>(context);
+    final favProvider = Provider.of<FavProvider>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -30,7 +33,10 @@ class PopularProduct extends StatelessWidget {
               bottomRight: Radius.circular(10),
               bottomLeft: Radius.circular(10),
             ),
-            onTap: () {Navigator.pushNamed(context, ProductDetails.routeName,arguments: productAttribute.id);},
+            onTap: () {
+              Navigator.pushNamed(context, ProductDetails.routeName,
+                  arguments: productAttribute.id);
+            },
             child: Column(
               children: [
                 Stack(
@@ -39,24 +45,33 @@ class PopularProduct extends StatelessWidget {
                       height: 170,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: NetworkImage(
-                                productAttribute.imageUrl),
+                            image: NetworkImage(productAttribute.imageUrl),
                             fit: BoxFit.contain),
                       ),
                     ),
                     Positioned(
-                        top: 10,
-                        right: 10,
-                        child: Icon(
-                          Entypo.star_outlined,
-                          color: Colors.grey.shade800,
-                        )),
+                      top: 10,
+                      right: 10,
+                      child: Icon(
+                        favProvider.getFavItems.containsKey(productAttribute.id)
+                            ? Entypo.star
+                            : Entypo.star_outlined,
+                        color: favProvider.getFavItems
+                                .containsKey(productAttribute.id)
+                            ? Colors.red
+                            : Colors.grey.shade800,
+                      ),
+                    ),
                     // Positioned(
                     //     top: 7,
                     //     right: 10,
                     //     child: Icon(
                     //       Entypo.star,
-                    //       color: Colors.grey.shade800,
+                    //         color: favProvider.getFavItems
+                    //                     .containsKey(productAttribute.id)
+                    //                 ? Colors.red
+                    //                 : Colors.grey.shade800,
+                    //       // color: Colors.grey.shade800,
                     //     )),
                     Positioned(
                         bottom: 32,
@@ -80,14 +95,14 @@ class PopularProduct extends StatelessWidget {
                       Text(
                         productAttribute.title,
                         maxLines: 1,
-                        style:
-                            TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            flex:4,
+                            flex: 4,
                             child: Text(
                               productAttribute.description,
                               maxLines: 2,
@@ -104,15 +119,38 @@ class PopularProduct extends StatelessWidget {
                               color: Colors.transparent,
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(30),
-                                onTap: () {},
-                                child: Icon(
-                                  MaterialCommunityIcons.cart_plus,
-                                  size: 25,
-                                  color: Colors.black,
-                                ),
+                                onTap: cartProvider.getCartItems
+                                        .containsKey(productAttribute.id)
+                                    ? () {}
+                                    : () {
+                                        cartProvider.addProductToCart(
+                                            productAttribute.title,
+                                            productAttribute.imageUrl,
+                                            productAttribute.price,
+                                            productAttribute.id);
+                                      },
+                                child: Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Icon(
+                                      cartProvider.getCartItems
+                                              .containsKey(productAttribute.id)
+                                          ? MaterialCommunityIcons.check_all
+                                          : MaterialCommunityIcons.cart_plus,
+                                      size: 25,
+                                      color: Colors.black,
+                                    )
+                                    // cartProvider.getCartItems
+                                    //         .containsKey(productAttribute.id)
+                                    //     ? MaterialCommunityIcons.check_all
+                                    //     : Icon(
+                                    //         MaterialCommunityIcons.cart_plus,
+                                    //         size: 25,
+                                    //         color: Colors.black,
+                                    //       ),
+                                    ),
                               ),
                             ),
-                          )
+                          ),
                         ],
                       )
                     ],

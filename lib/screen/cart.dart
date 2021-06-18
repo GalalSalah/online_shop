@@ -19,15 +19,25 @@ class Cart extends StatelessWidget {
         ? Scaffold(body: CartEmpty())
         : Scaffold(
             appBar: AppBar(
-              title: Text('Cart Items Count'),
+              backgroundColor: Theme.of(context).backgroundColor,
+              title: Text('Cart (${cartProvider.getCartItems.length})'),
               actions: [
-                IconButton(icon: Icon(MyAppIcons.trash), onPressed: () {})
+                IconButton(
+                    icon: Icon(MyAppIcons.trash),
+                    onPressed: () {
+                      cartProvider.showDialogText(
+                          'Clear Cart ',
+                          'Cart Will be Clear',
+                          cartProvider.clearCart(),
+                          context);
+                    })
               ],
             ),
-            bottomSheet: checkOutSection(context),
+            bottomSheet: checkOutSection(context, cartProvider.totalAmount),
             body: Container(
               margin: EdgeInsets.only(bottom: 60),
               child: ListView.builder(
+
                   itemCount: cartProvider.getCartItems.length,
                   itemBuilder: (BuildContext context, int index) {
                     return ChangeNotifierProvider.value(
@@ -40,7 +50,7 @@ class Cart extends StatelessWidget {
             ));
   }
 
-  Widget checkOutSection(BuildContext context) {
+  Widget checkOutSection(BuildContext context, double subtotal) {
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -92,8 +102,11 @@ class Cart extends StatelessWidget {
                   color: Theme.of(context).textSelectionColor,
                   fontSize: 14),
             ),
+            SizedBox(
+              width: 5,
+            ),
             Text(
-              'US \$ 550',
+              'US \$ ${(subtotal.toStringAsFixed(3))}',
               style: TextStyle(
                   fontWeight: FontWeight.w500,
                   color: Colors.blue,

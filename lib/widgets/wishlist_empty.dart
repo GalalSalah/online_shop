@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:online_shop/provider/dark_theme.dart';
+import 'package:online_shop/screen/feeds.dart';
 import 'package:provider/provider.dart';
 
 class WishlistEmpty extends StatelessWidget {
@@ -44,7 +45,9 @@ class WishlistEmpty extends StatelessWidget {
               side: BorderSide(color: Colors.red),
             ),
             color: Colors.redAccent,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, Feeds.routeName);
+            },
             child: Text(
               'Add a wish'.toUpperCase(),
               textAlign: TextAlign.center,
